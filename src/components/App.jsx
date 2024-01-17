@@ -8,16 +8,15 @@ import Button from './Button/Button';
 import Loader from './Loader/Loader';
 import Modal from './Modal/Modal';
 
+let perPage = 12;
+
 const App = () => {
   const [images, setImages] = useState([]);
   const [q, setQ] = useState('');
   const [page, setPage] = useState(1);
   const [isShowLoadMore, setIsShowLoadMore] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [totalHits, setTotalHits] = useState(0);
   const [isFirstPage, setIsFirstPage] = useState(true);
-  const [itemsPerPage, setItemsPerPage] = useState(null);
-  const [perPage, setPerPage] = useState(12);
   const [isShowModal, setIsShowModal] = useState(false);
   const [img, setImg] = useState(null);
 
@@ -29,7 +28,6 @@ const App = () => {
       if (q.trim() === '' || page === 1) {
         setIsShowLoadMore(false);
         setImages([]);
-        setTotalHits(0);
       }
       try {
         setLoading(true);
@@ -37,8 +35,6 @@ const App = () => {
 
         if (resultImages !== undefined && resultImages.length > 0) {
           setImages(prevImages => [...prevImages, ...resultImages]);
-
-          setTotalHits(totalHits);
 
           const isLastPage = resultImages.length < perPage;
 
@@ -63,7 +59,6 @@ const App = () => {
             );
           }
         } else {
-          setTotalHits(0);
           setImages([]);
           setIsShowLoadMore(false);
           toast.warn(
@@ -73,7 +68,6 @@ const App = () => {
       } catch (error) {
         console.log(error.message);
         setIsShowLoadMore(false);
-        setItemsPerPage(null);
         toast.error('Oops! Something went wrong. Try reloading the page.');
       } finally {
         setLoading(false);
@@ -81,7 +75,7 @@ const App = () => {
     };
 
     fetchData();
-  }, [q, page, perPage, isFirstPage]);
+  }, [q, page, isFirstPage]);
 
   const handleSubmit = newQ => {
     if (!newQ.trim()) {
@@ -96,10 +90,8 @@ const App = () => {
     setImages([]);
     setQ(newQ);
     setPage(1);
-    setTotalHits(0);
     setIsFirstPage(true);
     setIsShowLoadMore(false);
-    setItemsPerPage(null);
   };
 
   const handleLoadMore = () => {
